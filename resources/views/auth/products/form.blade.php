@@ -30,6 +30,7 @@
                     <div class="col-sm-6">
                         <input type="text" name="code" class="form-control" id="code"
                                value="@isset($product){{ $product->code }}@endisset">
+                        @include('layouts.auth.error', ['fieldName' => 'code'])
                     </div>
                 </div>
                 <br>
@@ -38,6 +39,7 @@
                     <div class="col-sm-6">
                         <input type="text" name="name" class="form-control" id="name"
                                value="@isset($product){{ $product->name }}@endisset">
+                        @include('layouts.auth.error', ['fieldName' => 'name'])
                     </div>
                 </div>
                 <br>
@@ -45,6 +47,7 @@
                     <label for="name" class="col-sm-2 col-form-label">Категория: </label>
                     <div class="col-sm-6">
                         <select name="category_id" id="category_id" class="form-control">
+                            @include('layouts.auth.error', ['fieldName' => 'category_id'])
                             @foreach($categories as $category)
                                 <option value="{{ $category->id }}"
                                         @isset($product)
@@ -63,6 +66,7 @@
                     <div class="col-sm-6">
                         <textarea name="description" id="description" cols="72"
                                   rows="7">@isset($product){{ $product->description }}@endisset</textarea>
+                        @include('layouts.auth.error', ['fieldName' => 'description'])
                     </div>
                 </div>
                 <br>
@@ -78,10 +82,26 @@
                 <div class="input-group row">
                     <label for="price" class="col-sm-2 col-form-label">Цена: </label>
                     <div class="col-sm-6">
-                        <input type="number" name="price" class="form-control" id="price"
+                        <input type="text" name="price" class="form-control" id="price"
                                value="@isset($product){{ $product->price }}@endisset">
+                        @include('layouts.auth.error', ['fieldName' => 'price'])
                     </div>
                 </div>
+                <br>
+                @foreach([
+                'hit' => 'Хит',
+                'new' => 'Новинка',
+                'recommend' => 'Рекомендуемые'
+                ] as $field => $title)
+                    <div class="ml-lg-5 w-25 h-50 form-check form-check-inline mr-md-5 mb-5">
+                        <label for="price" class="form-check-label">{{ $title }} </label>
+                        <input type="checkbox" name="{{ $field }}" class="form-check-input form-control" id="{{ $field }}"
+                        @if(isset($product) && $product->$field === 1)
+                               checked="checked"
+                        @endif
+                        >
+                    </div>
+                @endforeach
                 <button class="btn btn-success">Сохранить</button>
             </div>
         </form>

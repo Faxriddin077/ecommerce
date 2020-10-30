@@ -30,9 +30,7 @@
                     <div class="col-sm-6">
                         <input type="text" name="code" class="form-control" id="code"
                                value="{{ old('code', isset($category) ? $category->code : null) }}">
-                        @error('code')
-                        <div class="alert alert-danger">{{ $message }}</div>
-                        @enderror
+                        @include('layouts.auth.error', ['fieldName' => 'code'])
                     </div>
                 </div>
                 <br>

@@ -17,19 +17,19 @@ class CategoriesTableSeeder extends Seeder
                 'name' => 'Мобильные телефоны',
                 'code' => 'mobiles',
                 'description' => 'В этом разделе вы найдёте самые популярные мобильные телефонамы по отличным ценам!',
-                'image' => 'categories/mobile.jpg'
+                'image' => 'categories/mobile.jpeg'
             ],
             [
                 'name' => 'Портативная техника',
                 'code' => 'portable',
                 'description' => 'Раздел с портативной техникой.',
-                'image' => 'categories/portable.jpg'
+                'image' => 'categories/portable.jpeg'
             ],
             [
                 'name' => 'Бытовая техника',
                 'code' => 'technics',
                 'description' => 'Раздел с бытовой техникой',
-                'image' => 'categories/appliance.jpg'
+                'image' => 'categories/appliance.jpeg'
             ]
         ]);
     }

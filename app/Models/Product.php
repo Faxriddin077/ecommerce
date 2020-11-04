@@ -1,11 +1,12 @@
 <?php
 
-namespace App;
+namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
 
 class Product extends Model
 {
+
     protected $fillable = [
         'code', 'name', 'description', 'category_id', 'image', 'price', 'hit', 'new', 'recommend'
     ];
@@ -23,6 +24,16 @@ class Product extends Model
             return $this->pivot->count * $this->price;
         }
         return $this->price;
+    }
+
+    public function scopeHit($query){
+        return $query->where('new', 1);
+    }
+    public function scopeNew($query){
+        return $query->where('hit', 1);
+    }
+    public function scopeRecommend($query){
+        return $query->where('recommend', 1);
     }
 
     public function setHitAttribute($value){

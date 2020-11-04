@@ -1,6 +1,6 @@
 <?php
 
-namespace App;
+namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
 
@@ -11,7 +11,11 @@ class Order extends Model
         return $this->belongsToMany(Product::class)->withPivot('count')->withTimestamps();
     }
 
-    public function getFullPrice(){
+    public function scopeActive($query){
+        return $query->where('status', 1);
+    }
+
+    public function calculateFullPrice(){
         $sum = 0;
         foreach ($this->products as $product){
             $sum += $product->getPriceForCount();
@@ -19,9 +23,18 @@ class Order extends Model
         return $sum;
     }
 
-//    public function user(){
-//        return $this->belongsTo(User::class);
-//    }
+    public function eraseOrderPrice(){
+        session()->forget('full_order_price');
+    }
+
+    public static function changeFullPrice($changePrice){
+        $sum = self::getFullPrice() + $changePrice;
+        session(['full_order_price' => $sum]);
+    }
+
+    public static function getFullPrice(){
+        return session('full_order_price', 0);
+    }
 
     public function saveOrder($name, $phone){
         if ($this->status == 0) {

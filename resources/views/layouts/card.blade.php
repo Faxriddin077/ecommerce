@@ -18,12 +18,13 @@
             <p>
             <form action="{{ route('basket-add', $product) }}" method="POST">
                 @csrf
-                <button type="submit" class="btn btn-primary" role="button">
-                    В корзину
-                </button>
-                <a href="{{ route('product', [isset($category) ? $category->code : $product->category->code, $product->code]) }}" class="btn btn-default"
-                   role="button">
-                    Подробнее
+                @if($product->isAvailable())
+                <button type="submit" class="btn btn-primary" role="button">В корзину</button>
+                @else
+                    Недоступен
+                @endif
+                <a href="{{ route('product', [isset($category) ? $category->code : $product->category->code, $product->code]) }}"
+                   class="btn btn-default" role="button">Подробнее
                 </a>
             </form>
 

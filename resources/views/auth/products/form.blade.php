@@ -88,13 +88,22 @@
                     </div>
                 </div>
                 <br>
+                <div class="input-group row">
+                    <label for="count" class="col-sm-2 col-form-label">Кол-во: </label>
+                    <div class="col-sm-6">
+                        <input type="text" name="count" class="form-control" id="count"
+                               value="@isset($product){{ $product->count }}@endisset">
+                        @include('layouts.auth.error', ['fieldName' => 'count'])
+                    </div>
+                </div>
+                <br>
                 @foreach([
                 'hit' => 'Хит',
                 'new' => 'Новинка',
                 'recommend' => 'Рекомендуемые'
                 ] as $field => $title)
                     <div class="ml-lg-5 w-25 h-50 form-check form-check-inline mr-md-5 mb-5">
-                        <label for="price" class="form-check-label">{{ $title }} </label>
+                        <label for="{{ $field }}" class="form-check-label">{{ $title }} </label>
                         <input type="checkbox" name="{{ $field }}" class="form-check-input form-control" id="{{ $field }}"
                         @if(isset($product) && $product->$field === 1)
                                checked="checked"

@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Classes\Basket;
 use App\Models\Order;
 use App\Models\Product;
 use Illuminate\Http\Request;
@@ -10,81 +11,41 @@ use Illuminate\Support\Facades\Auth;
 class BasketController extends Controller
 {
     public function basket(){
-        $orderId = session('orderId');
-        if (!is_null($orderId)) {
-            $order = Order::findOrFail($orderId);
-        }
+        $order = (new Basket())->getOrder();
         return view('basket', compact('order'));
     }
 
     public function basketConfirm(Request $request){
-        $orderId = session('orderId');
-        if (is_null($orderId)) {
-            return redirect()->route('index');
-        }
-        $order = Order::find($orderId);
-        $success = $order->saveOrder($request->name, $request->phone);
-        if ($success) {
-            session()->flash('success', 'Ваш заказ принят в обработку!');
-        }else{
-            session()->flash('warning', 'something went wrong');
-        }
+        $email = Auth::check() ? Auth::id() : $request->email;
+        if ((new Basket())->saveOrder($request->name, $request->phone, $request->email)) session()->flash('success', 'Ваш заказ принят в обработку!');
+        else session()->flash('warning', 'Товар ne dostupen dlya zakaza v polnom obyome');
         Order::eraseOrderPrice();
-
         return redirect()->route('index');
     }
+
     public function basketPlace(){
-        $orderId = session('orderId');
-        if (is_null($orderId)) {
-            return redirect()->route('index');
+        $basket = (new Basket());
+        $order = $basket->getOrder();
+        if (!$basket->countAvailable()) {
+            session()->flash('warning', 'Товар ne dostupen dlya zakaza v polnom obyome');
+            return redirect()->route('basket');
         }
-        $order = Order::find($orderId);
         return view('order', compact('order'));
     }
 
-    public function basketAdd($product_id){
-        $orderId = session('orderId');
-        if (is_null($orderId)) {
-            $order = Order::create();
-            session(['orderId' => $order->id]);
-        }else{
-            $order = Order::find($orderId);
+    public function basketAdd(Product $product){
+        $result = (new Basket(true))->addProduct($product);
+        if($result){
+            session()->flash('success', 'Добавлен товар '.$product->name);
         }
-        if ($order->products->contains($product_id)) {
-            $pivotRow = $order->products()->where('product_id', $product_id)->first()->pivot;
-            $pivotRow->count++;
-            $pivotRow->update();
-        }else{
-            $order->products()->attach($product_id);
+        else {
+            session()->flash('warning', 'Товар '.$product->name . ' v bolshem kolichestvo ne dostupen dlya zakaza');
         }
-
-        if (Auth::check()) {
-            $order->user_id = Auth::id();
-            $order->save();
-        }
-        $product = Product::find($product_id);
-        Order::changeFullPrice($product->price);
-        session()->flash('success', 'Добавлен товар '.$product->name);
         return redirect()->route('basket');
     }
 
-    public function basketRemove($product_id){
-        $orderId = session('orderId');
-        if (is_null($orderId)) {
-            return redirect()->route('basket');
-        }
-        $order = Order::find($orderId);
-
-        if ($order->products->contains($product_id)) {
-            $pivotRow = $order->products()->where('product_id', $product_id)->first()->pivot;
-            if ($pivotRow->count < 2) {
-                $order->products()->detach($product_id);
-            }
-            $pivotRow->count--;
-            $pivotRow->update();
-        }
-        $product = Product::find($product_id);
-        Order::changeFullPrice(-$product->price);
+    public function basketRemove(Product $product){
+        (new Basket())->removeProduct($product);
         session()->flash('warning', 'Удален товар '.$product->name);
         return redirect()->route('basket');
     }

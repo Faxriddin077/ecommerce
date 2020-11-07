@@ -6,6 +6,7 @@ use Illuminate\Database\Eloquent\Model;
 
 class Order extends Model
 {
+    protected $fillable = ['user_id'];
     public function products()
     {
         return $this->belongsToMany(Product::class)->withPivot('count')->withTimestamps();
@@ -17,13 +18,13 @@ class Order extends Model
 
     public function calculateFullPrice(){
         $sum = 0;
-        foreach ($this->products as $product){
+        foreach ($this->products()->withTrashed()->get() as $product){
             $sum += $product->getPriceForCount();
         }
         return $sum;
     }
 
-    public function eraseOrderPrice(){
+    public static function eraseOrderPrice(){
         session()->forget('full_order_price');
     }
 

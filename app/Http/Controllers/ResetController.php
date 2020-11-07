@@ -9,6 +9,7 @@ use Illuminate\Support\Facades\Storage;
 class ResetController extends Controller
 {
     public function reset(){
+        session()->flush();
         Artisan::call('migrate:fresh --seed');
 
         foreach (['categories', 'products'] as $folder){
@@ -16,7 +17,7 @@ class ResetController extends Controller
             Storage::makeDirectory($folder);
 
             $files = Storage::disk('reset')->files($folder);
-            
+
             foreach ($files as $file){
                 Storage::put($file, Storage::disk('reset')->get($file));
             }

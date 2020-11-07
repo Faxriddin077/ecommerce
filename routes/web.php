@@ -11,6 +11,10 @@
 |
 */
 
+
+use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Route;
+
 Auth::routes([
     'reset' => false,
     'confirm' => false,
@@ -57,14 +61,14 @@ Route::group([
     Route::group(['middleware' => 'basket_not_empty'], function (){
         Route::get('/', 'BasketController@basket')->name('basket');
         Route::get('/place', 'BasketController@basketPlace')->name('basket-place');
-        Route::post('/remove/{id}', 'BasketController@basketRemove')->name('basket-remove');
+        Route::post('/remove/{product}', 'BasketController@basketRemove')->name('basket-remove');
         Route::post('/place', 'BasketController@basketConfirm')->name('basket-confirm');
     });
-    Route::post('/add/{id}', 'BasketController@basketAdd')->name('basket-add');
+    Route::post('/add/{product}', 'BasketController@basketAdd')->name('basket-add');
 });
 
 Route::get('/{category}', 'MainController@category')->name('category');
-Route::get('/{category}/{product?}', 'MainController@product')->name('product');
+Route::get('/{category}/{product}', 'MainController@product')->name('product');
 
 
 

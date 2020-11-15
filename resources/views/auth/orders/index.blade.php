@@ -33,7 +33,7 @@
                     <td>{{ $order->name }}</td>
                     <td>{{ $order->phone }}</td>
                     <td>{{ $order->created_at->format('H:i d/m/Y') }}</td>
-                    <td>{{ $order->calculateFullPrice() }} ₽</td>
+                    <td>{{ $order->calculateFullPrice() }} {{ App\Services\CurrencyConversation::getCurrencySymbol() }}</td>
                     <td>
                         <div role="group" class="btn-group">
                             <a type="button" href="{{ route('person.orders.show', $order) }}" class="btn btn-success">

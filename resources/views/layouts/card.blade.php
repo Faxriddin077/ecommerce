@@ -14,7 +14,7 @@
         <img src="{{ Storage::url($product->image) }}" alt="{{ $product->__('name') }}">
         <div class="caption">
             <h3>{{ $product->__('name') }}</h3>
-            <p>{{ $product->price }} ₽</p>
+            <p>{{ $product->price }} {{ App\Services\CurrencyConversation::getCurrencySymbol() }}</p>
             <p>
             <form action="{{ route('basket-add', $product) }}" method="POST">
                 @csrf

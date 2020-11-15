@@ -2,16 +2,19 @@
 
 namespace App\Models;
 
+use App\Models\Traits\Translatable;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
 
 class Product extends Model
 {
-    use SoftDeletes;
+    use SoftDeletes, Translatable;
 
     protected $fillable = [
-        'code', 'name', 'description', 'category_id', 'image', 'price', 'hit', 'new', 'recommend', 'count'
+//        'code', 'name', 'description', 'category_id', 'image', 'price', 'hit', 'new', 'recommend', 'count', 'name_en', 'description_en'
     ];
+
+    protected $guarded = [];
 
     public function getCategory(){
         return Category::where('id', $this->category_id)->first();

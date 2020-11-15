@@ -44,7 +44,16 @@
                 </div>
                 <br>
                 <div class="input-group row">
-                    <label for="name" class="col-sm-2 col-form-label">Категория: </label>
+                    <label for="name_en" class="col-sm-2 col-form-label">Название (En): </label>
+                    <div class="col-sm-6">
+                        <input type="text" name="name_en" class="form-control" id="name_en"
+                               value="@isset($product){{ $product->name_en }}@endisset">
+                        @include('layouts.auth.error', ['fieldName' => 'name_en'])
+                    </div>
+                </div>
+                <br>
+                <div class="input-group row">
+                    <label for="category_id" class="col-sm-2 col-form-label">Категория: </label>
                     <div class="col-sm-6">
                         <select name="category_id" id="category_id" class="form-control">
                             @include('layouts.auth.error', ['fieldName' => 'category_id'])
@@ -67,6 +76,15 @@
                         <textarea name="description" id="description" cols="72"
                                   rows="7">@isset($product){{ $product->description }}@endisset</textarea>
                         @include('layouts.auth.error', ['fieldName' => 'description'])
+                    </div>
+                </div>
+                <br>
+                <div class="input-group row">
+                    <label for="description_en" class="col-sm-2 col-form-label">Описание (En): </label>
+                    <div class="col-sm-6">
+                        <textarea name="description_en" id="description_en" cols="72"
+                                  rows="7">@isset($product){{ $product->description_en }}@endisset</textarea>
+                        @include('layouts.auth.error', ['fieldName' => 'description_en'])
                     </div>
                 </div>
                 <br>
@@ -104,10 +122,11 @@
                 ] as $field => $title)
                     <div class="ml-lg-5 w-25 h-50 form-check form-check-inline mr-md-5 mb-5">
                         <label for="{{ $field }}" class="form-check-label">{{ $title }} </label>
-                        <input type="checkbox" name="{{ $field }}" class="form-check-input form-control" id="{{ $field }}"
-                        @if(isset($product) && $product->$field === 1)
+                        <input type="checkbox" name="{{ $field }}" class="form-check-input form-control"
+                               id="{{ $field }}"
+                               @if(isset($product) && $product->$field === 1)
                                checked="checked"
-                        @endif
+                            @endif
                         >
                     </div>
                 @endforeach

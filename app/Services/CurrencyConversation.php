@@ -3,6 +3,7 @@
 namespace App\Services;
 
 use App\Models\Currency;
+use Carbon\Carbon;
 
 class CurrencyConversation
 {
@@ -28,17 +29,41 @@ class CurrencyConversation
         self::loadContainer();
 
         $originCurrency = self::$container[$originCurrencyCode];
+
+        if ($originCurrency->updated_at->startOfDay() != Carbon::now()->startOfDay()) {
+            CurrencyRates::getRates();
+            self::loadContainer();
+            $originCurrency = self::$container[$originCurrencyCode];
+        }
+
         if (is_null($targetCurrencyCode)) {
             $targetCurrencyCode = session('currency', 'RUB');
         }
         $targetCurrency = self::$container[$targetCurrencyCode];
 
-        return $sum * $originCurrency->rate / $targetCurrency->rate;
+        if ($targetCurrency->updated_at->startOfDay() != Carbon::now()->startOfDay()) {
+            CurrencyRates::getRates();
+            self::loadContainer();
+            $targetCurrency = self::$container[$targetCurrencyCode];
+        }
+
+        return $sum / $originCurrency->rate * $targetCurrency->rate;
     }
 
     public static function getCurrencySymbol()
     {
         self::loadContainer();
         return self::$container[session('currency', 'RUB')]->symbol;
+    }
+
+    public static function getBaseCurrency()
+    {
+        self::loadContainer();
+
+        foreach (Self::$container as $code => $currency){
+            if ($currency->isMain()) {
+                return $currency;
+            }
+        }
     }
 }

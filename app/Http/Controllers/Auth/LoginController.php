@@ -24,6 +24,7 @@ class LoginController extends Controller
     /**
      * Where to redirect users after login.
      *
+     * @return string
      * @var string
      */
     protected function redirectTo(){

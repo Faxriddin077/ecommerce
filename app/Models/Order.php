@@ -6,49 +6,59 @@ use Illuminate\Database\Eloquent\Model;
 
 class Order extends Model
 {
-    protected $fillable = ['user_id'];
+    protected $fillable = ['user_id', 'currency_id', 'sum'];
+
     public function products()
     {
-        return $this->belongsToMany(Product::class)->withPivot('count')->withTimestamps();
+        return $this->belongsToMany(Product::class)->withPivot(['count', 'price'])->withTimestamps();
     }
 
-    public function scopeActive($query){
+    public function currency()
+    {
+        return $this->belongsTo(Currency::class);
+    }
+
+    public function scopeActive($query)
+    {
         return $query->where('status', 1);
     }
 
-    public function calculateFullPrice(){
+    public function calculateFullPrice()
+    {
         $sum = 0;
-        foreach ($this->products()->withTrashed()->get() as $product){
+        foreach ($this->products()->withTrashed()->get() as $product) {
             $sum += $product->getPriceForCount();
         }
         return $sum;
     }
 
-    public static function eraseOrderPrice(){
-        session()->forget('full_order_price');
-    }
+    public function getFullPrice()
+    {
+        $sum = 0;
 
-    public static function changeFullPrice($changePrice){
-        $sum = self::getFullPrice() + $changePrice;
-        session(['full_order_price' => $sum]);
-    }
-
-    public static function getFullPrice(){
-        return session('full_order_price', 0);
-    }
-
-    public function saveOrder($name, $phone){
-        if ($this->status == 0) {
-            $this->name = $name;
-            $this->phone = $phone;
-//            $this->email = $email;
-            $this->status = 1;
-            $this->save();
-            session()->forget('orderId');
-            return true;
+        foreach ($this->products as $product) {
+            $sum += $product->price * $product->countInOrder;
         }
-        else{
-            return false;
+        return $sum;
+    }
+
+    public function saveOrder($name, $phone)
+    {
+        $this->name = $name;
+        $this->phone = $phone;
+        $this->status = 1;
+        $this->sum = $this->getFullPrice();
+
+        $products = $this->products;
+        $this->save();
+
+        foreach ($products as $productInOrder){
+            $this->products()->attach($productInOrder, [
+                'count' => $productInOrder->countInOrder,
+                'price' => $productInOrder->price
+            ]);
         }
+            session()->forget('order');
+        return true;
     }
 }

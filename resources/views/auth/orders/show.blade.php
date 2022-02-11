@@ -29,14 +29,15 @@
                                         {{ $product->name }}
                                     </a>
                                 </td>
-                                <td><span class="badge">{{ $product->pivot->count }}</span></td>
-                                <td>{{ $product->price }} {{App\Services\CurrencyConversation::getCurrencySymbol()}}</td>
-                                <td>{{ $product->getPriceForCount() }} {{App\Services\CurrencyConversation::getCurrencySymbol()}}</td>
+                                @dd($order->products()->where('product_id', $product->id))
+                                <td><span class="badge">{{ $order->products() }}</span></td>
+                                <td>{{ $product->price }} {{ $order->currency->symbol }}</td>
+                                <td>{{ $product->getPriceForCount() }} {{ $order->currency->symbol }}</td>
                             </tr>
                         @endforeach
                         <tr>
                             <td colspan="3">Общая стоимость:</td>
-                            <td>{{ $order->calculateFullPrice() }} {{ App\Services\CurrencyConversation::getCurrencySymbol() }}</td>
+                            <td>{{ $order->sum }} {{ $order->currency->symbol }}</td>
                         </tr>
                         </tbody>
                     </table>

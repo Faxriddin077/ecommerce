@@ -1,6 +1,6 @@
-<p>Hurmatli {{ $name }} </p>
+<p>@lang('mail/order_created.dear') {{ $name }} </p>
 
-<p>Sizning buyurtmangiz {{ $fullPrice }} yaratildi</p>
+<p>@lang('mail/order_created.your_order') {{ $fullPrice }} @lang('mail/order_created.created')</p>
 
 <table>
     <tbody>
@@ -12,7 +12,7 @@
                     {{ $product->__('name') }}
                 </a>
             </td>
-            <td><span class="badge">{{ $product->pivot->count }}</span>
+            <td><span class="badge">{{ $product->count }}</span>
                 <div class="btn-group form-inline">
                     {!! $product->__('description') !!}
                 </div>

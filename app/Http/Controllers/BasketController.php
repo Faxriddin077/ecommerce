@@ -17,9 +17,10 @@ class BasketController extends Controller
 
     public function basketConfirm(Request $request){
         $email = Auth::check() ? Auth::id() : $request->email;
-        if ((new Basket())->saveOrder($request->name, $request->phone, $request->email)) session()->flash('success', __('basket.your_order_confirmed'));
-        else session()->flash('warning', __('basket.you_cant_order_more'));
-        Order::eraseOrderPrice();
+        if ((new Basket())->saveOrder($request->name, $request->phone, $email))
+            session()->flash('success', __('basket.your_order_confirmed'));
+        else
+            session()->flash('warning', __('basket.you_cant_order_more'));
         return redirect()->route('index');
     }
 
@@ -37,8 +38,7 @@ class BasketController extends Controller
         $result = (new Basket(true))->addProduct($product);
         if($result){
             session()->flash('success', __('basket.added').$product->name);
-        }
-        else {
+        } else {
             session()->flash('warning', __('main.product') . $product->name . __('basket.not_available_more'));
         }
         return redirect()->route('basket');

@@ -17,11 +17,12 @@ class BasketIsNotEmpty
      */
     public function handle($request, Closure $next)
     {
-        $orderId = session('orderId');
-        if (!is_null($orderId) && Order::getFullPrice() > 0) {
+        $order = session('order');
+        if (!is_null($order) && $order->getFullPrice() > 0) {
                 return $next($request);
         }
-        session()->flash('warning', "Korzinada mahsulot yo'q");
+        session()->forget('order');
+        session()->flash('warning', __('basket.cart_is_empty'));
         return redirect()->route('index');
     }
 }

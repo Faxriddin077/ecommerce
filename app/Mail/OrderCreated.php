@@ -31,7 +31,7 @@ class OrderCreated extends Mailable
      */
     public function build()
     {
-        $fullPrice = $this->order->calculateFullPrice();
+        $fullPrice = $this->order->getFullPrice();
         return $this->view('mail.order_created', [
             'name' => $this->name,
             'order' => $this->order,

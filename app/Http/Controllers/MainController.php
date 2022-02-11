@@ -18,6 +18,7 @@ class MainController extends Controller
         \App\Services\CurrencyRates::getRates();
 
         $productQuery = Product::with('category');
+        dd(\request()->url());
         if ($request->filled('price_from')) {
             $productQuery->where('price', '>=', $request->price_from);
         }
